@@ -23,7 +23,7 @@ CONSUMER
 API POST  
 guardarTransaccion
 
-## 🧩 Componentes
+##  Componentes
 
 ### 1. Productor (Componente A)
 Función: Obtiene transacciones del API GET y las publica en RabbitMQ.
@@ -91,3 +91,31 @@ Garantía de no pérdida
 Manejo de errores 
 ACK manual 
 Colas dinámicas
+
+## Principios SOLID Aplicados:
+
+### S — Single Responsibility Principle (Responsabilidad Única):
+
+Se separó la lógica de conexión a RabbitMQ en una clase independiente para que ConsumerService se enfoque únicamente en consumir mensajes.
+
+Clase creada:
+RabbitMQConnection.java: Maneja exclusivamente la conexión con RabbitMQ.
+
+Beneficio:
+Si cambia la configuración de RabbitMQ, solo se modifica esta clase.
+ConsumerService queda más limpio y enfocado en su responsabilidad.
+
+### O — Open/Closed Principle (Abierto/Cerrado):
+
+La lista de bancos se movió a un archivo de propiedades externo, permitiendo agregar nuevos bancos sin modificar el código fuente.
+
+Archivos creados:
+config.properties (en src/main/resources/): Contiene los bancos soportados.
+Config.java: Lee las propiedades desde el archivo.
+
+Beneficio:
+Para agregar el banco "INDUSTRIAL", solo se edita config.properties.
+El código queda cerrado a modificaciones pero abierto a extensiones.
+
+## Video Demostracion:
+https://drive.google.com/file/d/1KO5wAi6O9ZELuXu2c8xmifyY4HXIl85T/view?usp=drivesdk
