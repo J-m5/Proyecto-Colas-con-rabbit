@@ -16,21 +16,19 @@ public class ProducerService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void enviarTransaccion(Transaction transaccion) {
-        String nombreCola = transaccion.getBancoDestino();
-        
+    public void enviarTransaccion(Transaction transaccion, String colaDestino) {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             
-            channel.queueDeclare(nombreCola, true, false, false, null);
+            channel.queueDeclare(colaDestino, true, false, false, null);
             String mensajeJson = objectMapper.writeValueAsString(transaccion);
-            channel.basicPublish("", nombreCola, null, mensajeJson.getBytes());
+            channel.basicPublish("", colaDestino, null, mensajeJson.getBytes());
             
-            System.out.println("Enviada: " + transaccion.getIdTransaccion() + " -> " + nombreCola);
+            System.out.println(" Enviada a " + colaDestino + ": " + transaccion.getIdTransaccion());
             
         } catch (Exception e) {
             System.err.println("Error enviando transacción " + transaccion.getIdTransaccion() + 
-                             " a " + nombreCola + ": " + e.getMessage());
+                             " a " + colaDestino + ": " + e.getMessage());
         }
     }
 }

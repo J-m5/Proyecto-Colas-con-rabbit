@@ -26,7 +26,17 @@ public class Main {
                 transaccion.setNombre("Jose Rosales");
                 transaccion.setCarnet("0905-24-17488");
                 
-                producerService.enviarTransaccion(transaccion);
+                String colaDestino;
+                if (transaccion.getMonto() > 4000.00) {
+                    colaDestino = "cola_rechazados";
+                    // transaccion.setEstado("rechazada");   
+                } else {
+                    colaDestino = transaccion.getBancoDestino();
+                    // transaccion.setEstado("aceptada");    
+                }
+               
+                
+                producerService.enviarTransaccion(transaccion, colaDestino);
                 contador++;
                 
                 try { Thread.sleep(100); } catch (Exception e) {}

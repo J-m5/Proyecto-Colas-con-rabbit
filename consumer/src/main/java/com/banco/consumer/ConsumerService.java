@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ConsumerService {
-    private static final List<String> COLAS = Arrays.asList(Config.getBancos());
+
+    private static final List<String> COLAS = Arrays.asList(
+        "BAC", "BANRURAL", "BI", "GYT", "cola_rechazados"
+    );
     
     private final RabbitMQConnection rabbitConnection;
     private final ApiClient apiClient;
@@ -29,12 +32,15 @@ public class ConsumerService {
                 
                 DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                     String mensaje = new String(delivery.getBody(), "UTF-8");
-                    System.out.println("Mensaje recibido: " + mensaje);
+                    System.out.println(" Mensaje recibido: " + mensaje);
                     
                     try {
                         Transaction transaccion = objectMapper.readValue(mensaje, Transaction.class);
                         
-                        System.out.println("Recibida de " + nombreCola + ": " + transaccion.getIdTransaccion());
+                       
+                        System.out.println("Cola atendida: " + nombreCola);
+                        System.out.println("ID procesado: " + transaccion.getIdTransaccion());
+                       
                         
                         boolean guardado = apiClient.guardarTransaccion(transaccion);
                         
@@ -47,19 +53,19 @@ public class ConsumerService {
                         }
                         
                     } catch (Exception e) {
-                        System.err.println("Error procesando mensaje de " + nombreCola + ": " + e.getMessage());
+                        System.err.println(" Error procesando mensaje de " + nombreCola + ": " + e.getMessage());
                         channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
                     }
                 };
                 
                 channel.basicConsume(nombreCola, false, deliverCallback, consumerTag -> {});
-                System.out.println("Escuchando cola: " + nombreCola);
+                System.out.println(" Escuchando cola: " + nombreCola);
             }
             
-            System.out.println("Todos los consumidores iniciados");
+            System.out.println(" Todos los consumidores iniciados");
             
         } catch (Exception e) {
-            System.err.println("Error iniciando consumidores: " + e.getMessage());
+            System.err.println(" Error iniciando consumidores: " + e.getMessage());
         }
     }
 }

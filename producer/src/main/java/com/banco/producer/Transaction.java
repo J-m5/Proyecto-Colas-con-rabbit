@@ -10,7 +10,8 @@ public class Transaction {
     
     private String nombre;
     private String carnet;
-    
+    private String estado; 
+
     public Transaction() {
     }
 
@@ -77,7 +78,14 @@ public class Transaction {
     public void setCarnet(String carnet) {
         this.carnet = carnet;
     }
-    
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
     
     public static class Detalle {
         private String nombreBeneficiario;
